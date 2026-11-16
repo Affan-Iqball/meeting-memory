@@ -149,7 +149,7 @@ The server only listens on 127.0.0.1, and it refuses POST requests from other si
 | Our test set (`eval/gold.json`, 14 questions) | same | 14/14 citations valid; 51/56 key points; 9/14 fully complete, graded by a separate reviewer session (see `runs/eval/scores.json`) |
 | Cost | API list prices applied to measured tokens | about $4.40 per 1,000 meetings to extract on Haiku 5.5 (see WRITEUP.md) |
 
-Files: `answers.json` (submission), `WRITEUP.md` (one-page write-up; full version in `docs/WRITEUP_FULL.md`), `guide/Meeting_Memory_Interview_Guide.pdf` (study guide), `runs/official/` (answer and brief sources), `runs/eval/` (test-set answers and scores), `eval/` (gold questions and notes).
+Files: `answers.json` (submission), `WRITEUP.md` (one-page write-up; full version in `docs/WRITEUP_FULL.md`), `runs/official/` (answer and brief sources), `runs/eval/` (test-set answers and scores), `eval/` (gold questions and notes).
 
 Known limits:
 
