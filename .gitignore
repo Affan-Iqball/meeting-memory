@@ -9,3 +9,4 @@ REPLY_EMAIL_DRAFT.md
 RECORDING_SCRIPT.md
 guide/
 data/BRIEF.pdf
+runs/*/answers_export.json

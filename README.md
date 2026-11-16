@@ -128,7 +128,15 @@ Standard library only, reads the same `memory.db`:
 - **Brief:** the TS3012 pre-meeting brief, built from meetings 1 to 3.
 - **Explore a team:** every topic, with its current status and reversal count worked out by code, and an "as of meeting N" switch to rewind. Click a topic to see its timeline. Commitments are shown with whether and where they were reported back.
 - **Search:** keyword search over events and transcripts. "12.5" finds "twelve and a half"; "LCD" finds `L_C_D_`.
-- **Ask:** runs the answering agent live. It needs a Claude login or `ANTHROPIC_API_KEY`; if it fails, the error is shown and the other tabs still work.
+- **Setup:** connect a model once.
+  - It finds the Claude command-line tool by itself: `CLAUDE_BIN`, then `claude` on PATH, then the copy bundled with the Claude desktop app.
+  - Paste an Anthropic API key, or leave it empty to use your Claude subscription login (`claude login`).
+  - Pick the models, then press Test for one tiny call.
+  - The key is kept in memory, or, if you tick "remember", in `~/.config/meetmem/settings.json` (mode 600), never in the project. An `ANTHROPIC_API_KEY` environment variable always wins.
+- **Ask:** a new question about one team, run in the background with a live log, quotes and cost.
+- **Run:** answer all 25 questions into a separate run, write a brief as of any meeting, extract a team's meetings, export and check a run, or re-ingest. Jobs run one at a time in the background, with logs and cost. Paid jobs ask for confirmation first.
+
+The server only listens on 127.0.0.1, and it refuses POST requests from other sites, so a web page cannot change your settings or start jobs.
 
 ## Status (16 Nov 2026)
 

@@ -93,6 +93,8 @@ a.link{color:var(--accent);cursor:pointer;text-decoration:underline}
     <button data-tab="team">Explore a team</button>
     <button data-tab="search">Search</button>
     <button data-tab="ask">Ask</button>
+    <button data-tab="run">Run</button>
+    <button data-tab="setup">Setup</button>
     <button data-tab="help">How it works</button>
   </nav>
 </header>
@@ -223,17 +225,97 @@ async function showSearch(){
   if (S.lastQ) $("#f").requestSubmit();
 }
 
+const post = (path, body) => api(path, {method:"POST", headers:{"Content-Type":"application/json","X-Meetmem":"1"}, body: JSON.stringify(body)});
+const money = v => "$" + (v < 0.01 ? Number(v||0).toFixed(4) : Number(v||0).toFixed(2));
+let jobTimer = null;
+
+async function showSetup(){
+  const st = await api("/api/settings");
+  const ok = st.claude_bin.found, key = st.key;
+  view().innerHTML = `<div class="hero"><h2>Connect a model</h2><p>Browsing, search and the stored answers are free and need nothing. To ask new questions or run the agent, connect Claude here once. Everything stays on this computer.</p></div>
+  <div class="steps">
+    <div class="step"><div><h3>The Claude command-line tool ${ok?'<span class="pill in">found</span>':'<span class="pill out">not found</span>'}</h3>
+      <p>${ok?`Using <code>${esc(st.claude_bin.path)}</code>${st.claude_bin.version?` (${esc(st.claude_bin.version)})`:""}.`:'Install it with <code>npm install -g @anthropic-ai/claude-code</code>, or paste the path to the claude program below.'}</p>
+      <div class="bar" style="margin-top:8px"><input id="bin" placeholder="optional: path to claude" value="" style="flex:1"><button class="primary" id="savebin">Use this path</button></div></div></div>
+    <div class="step"><div><h3>Sign-in ${key.set?'<span class="pill in">API key set</span>':'<span class="pill open">subscription login</span>'}</h3>
+      <p>${key.set?`Key ${esc(key.hint||"")} from ${esc(key.source)}. Calls are billed to that key.`:'No API key: calls use the Claude subscription you are logged in with (run <code>claude login</code> once in a terminal). Or add an API key from console.anthropic.com:'}</p>
+      <div class="bar" style="margin-top:8px"><input id="key" type="password" autocomplete="off" placeholder="sk-ant-… (never leaves this computer)" style="flex:1">
+      <label class="meta"><input type="checkbox" id="remember"> remember on this computer</label><button class="primary" id="savekey">Save key</button>${key.set&&!key.source.startsWith("environment")?'<button class="primary" id="clearkey" style="background:var(--out)">Remove key</button>':""}</div>
+      <p class="meta" style="margin-top:6px">Without "remember", the key lasts until the server stops. With it, it is saved in <code>${esc(st.config_path)}</code> (only you can read it), never in the project folder.</p></div></div>
+    <div class="step"><div><h3>Models</h3><p>Answering and briefs: <select id="am">${st.model_choices.map(m=>`<option ${m===st.models.answer_model?"selected":""}>${m}</option>`).join("")}</select> &nbsp; Extraction: <select id="em">${st.model_choices.map(m=>`<option ${m===st.models.extract_model?"selected":""}>${m}</option>`).join("")}</select></p>
+      <p class="meta">Rough cost per answer: haiku ${money(st.estimates.answer.haiku)}, sonnet ${money(st.estimates.answer.sonnet)}, opus ${money(st.estimates.answer.opus)} (API list prices; a subscription is not billed per call).</p></div></div>
+    <div class="step"><div><h3>Test the connection</h3><p>One tiny Haiku call, which costs a fraction of a cent on an API key. If it says OK, everything in Run and Ask will work.</p><div id="testout"></div></div><button class="primary" id="test">Test</button></div>
+  </div>`;
+  const save = async body => { try { await post("/api/settings", body); showSetup(); } catch(e){ alert(e.message); } };
+  $("#savebin").onclick = () => save({claude_bin: $("#bin").value.trim()});
+  $("#savekey").onclick = () => { const k = $("#key").value.trim(); if (!k) return; save({api_key: k, remember: $("#remember").checked}); };
+  const ck = $("#clearkey"); if (ck) ck.onclick = () => confirm("Remove the saved API key from this computer?") && save({clear_key: true});
+  $("#am").onchange = e => save({answer_model: e.target.value});
+  $("#em").onchange = e => save({extract_model: e.target.value});
+  $("#test").onclick = async () => { $("#testout").innerHTML = `<p class="meta">Testing…</p>`; const j = await post("/api/jobs", {kind:"test"}); watchJob(j.id, $("#testout")); };
+}
+
+function jobCard(j){
+  const st = j.status==="done"?"in":(j.status==="running"||j.status==="queued")?"open":"out";
+  let res = "";
+  if (j.status==="done" && j.result && j.result.answer) res = `<p class="ans">${esc(j.result.answer)}</p><div class="cites">${(j.result.citations||[]).map(citeBtn).join("")}</div>`;
+  else if (j.status==="done" && j.result && j.result.text) res = `<pre style="white-space:pre-wrap">${esc(j.result.text)}</pre>`;
+  return `<div class="card"><span class="pill ${st}">${esc(j.status)}</span> <b>#${j.id} ${esc(j.kind)}</b> <span class="meta">${j.cost_usd?money(j.cost_usd)+" · ":""}${j.tokens?j.tokens.toLocaleString()+" tokens · ":""}${j.started_at?new Date(j.started_at*1000).toLocaleTimeString():"queued"}</span>
+    ${res}${j.error?`<p class="note">${esc(j.error)}</p>`:""}<pre style="white-space:pre-wrap;max-height:180px;overflow:auto;font:12px/1.4 var(--mono);margin:8px 0 0">${esc(j.log.join("\n"))}</pre></div>`;
+}
+async function watchJob(id, el){
+  const tick = async () => {
+    const all = await api("/api/jobs"); const j = all.find(x => x.id === id); if (!j) return;
+    el.innerHTML = jobCard(j); wireCites(el);
+    if (j.status==="queued" || j.status==="running") setTimeout(tick, 1500);
+  };
+  tick();
+}
+
+async function showRun(){
+  const st = await api("/api/settings"), m = st.models, E = st.estimates;
+  const conn = st.claude_bin.found ? (st.key.set ? `API key ${esc(st.key.hint||"")}` : "subscription login") : null;
+  view().innerHTML = `${conn?`<p class="note">Connected: ${conn}. Answering with <b>${esc(m.answer_model)}</b>, extracting with <b>${esc(m.extract_model)}</b>. <a class="link" data-tab="setup">Change</a></p>`:`<p class="note">The Claude tool is not set up yet. <a class="link" data-tab="setup">Open Setup</a> first; the free jobs below still work.</p>`}
+  <div class="grid2">
+    <div class="card"><h3 style="margin-top:0">Answer all 25 questions</h3><p class="meta">Runs the agent on data/questions.json into a separate run, so the submitted answers.json is untouched. Already-answered questions are skipped. About ${money(25*E.answer[m.answer_model])} at list price.</p>
+      <div class="bar"><input id="runname" value="live" style="max-width:140px"><button class="primary" data-job="ask_all">Run</button></div></div>
+    <div class="card"><h3 style="margin-top:0">Write a pre-meeting brief</h3><p class="meta">The agent sees only the meetings up to "as of" (enforced in SQL). About ${money(E.brief[m.answer_model])}.</p>
+      <div class="bar">${teamPicker(false)}<label class="meta">as of <input id="asofn" type="number" min="1" max="4" value="3" style="width:60px"></label><button class="primary" data-job="brief">Run</button></div></div>
+    <div class="card"><h3 style="margin-top:0">Extract a team's meetings</h3><p class="meta">Reads each meeting part with ${esc(m.extract_model)} and adds events to the ledger. Parts already extracted are skipped, so on this database it costs nothing unless you add meetings. About ${money(4*E.extract_per_meeting[m.extract_model])} per four-meeting team.</p>
+      <div class="bar"><span class="meta">team: the one picked on the left card</span><button class="primary" data-job="extract">Run</button></div></div>
+    <div class="card"><h3 style="margin-top:0">Free, no model</h3><p class="meta">Export a run to runs/&lt;run&gt;/answers_export.json and check every quote word for word, or re-ingest the transcripts.</p>
+      <div class="bar"><input id="exprun" value="official" style="max-width:140px"><button class="primary" data-job="export">Export and check</button><button class="primary" data-job="ingest">Re-ingest</button></div></div>
+  </div>
+  <h2>Jobs</h2><p class="meta">Jobs run one at a time in the background; you can keep browsing. If the account hits a usage limit the job stops and resumes where it left off when you run it again.</p><div id="joblist"></div>`;
+  wirePicker(showRun);
+  view().querySelectorAll("a.link").forEach(a => a.onclick = () => go(a.dataset.tab));
+  view().querySelectorAll("[data-job]").forEach(b => b.onclick = async () => {
+    const kind = b.dataset.job; const body = {kind};
+    if (kind==="ask_all") body.run = $("#runname").value;
+    if (kind==="brief"){ body.team = S.team; body.as_of = +$("#asofn").value; body.run = $("#runname").value; }
+    if (kind==="extract") body.team = S.team;
+    if (kind==="export") body.run = $("#exprun").value;
+    if (!["export","ingest"].includes(kind) && !confirm(`Start "${kind}"${kind!=="extract"?"":" for "+S.team}? This calls the model${st.key.set?" and is billed to your API key":""}.`)) return;
+    try { await post("/api/jobs", body); drawJobs(); } catch(e){ alert(e.message); }
+  });
+  drawJobs();
+}
+async function drawJobs(){
+  const el = $("#joblist"); if (!el) return;
+  const all = await api("/api/jobs");
+  el.innerHTML = all.map(jobCard).join("") || `<p class="empty">No jobs yet.</p>`; wireCites(el);
+  clearTimeout(jobTimer);
+  if (all.some(j => j.status==="queued"||j.status==="running")) jobTimer = setTimeout(drawJobs, 2000);
+}
+
 function showAsk(){
-  view().innerHTML = `<p class="note">Ask runs the answering agent live. It needs the Claude command-line tool logged in (or ANTHROPIC_API_KEY set) and takes a minute or two. If it fails, the error is shown here; the other tabs still work.</p>
+  view().innerHTML = `<p class="note">Ask a new question about one team. The agent searches the ledger, reads the transcript turns, and answers with exact quotes. It takes a minute or two. It needs a connected model: <a class="link" data-tab="setup">Setup</a>.</p>
     <form class="bar" id="f">${teamPicker(false)}<textarea id="q" rows="2" placeholder="e.g. What did the team finally decide about the case material, and why?"></textarea><button class="primary" id="go">Ask</button></form><div id="out"></div>`;
   wirePicker(showAsk);
-  $("#f").onsubmit = async ev => { ev.preventDefault(); $("#go").disabled = true; $("#out").innerHTML = `<p class="meta">Working… the agent is searching the ledger and reading transcript turns.</p>`;
-    try {
-      const r = await api("/api/ask", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({team:S.team, question:$("#q").value})});
-      $("#out").innerHTML = r.status === "done" ? `<div class="card"><p class="ans">${esc(r.answer)}</p><div class="cites">${(r.citations||[]).map(citeBtn).join("")}</div></div>` : `<p class="note">${esc(r.error || r.status)}</p>`;
-      wireCites($("#out"));
-    } catch(e){ $("#out").innerHTML = `<p class="note">${esc(e.message)}</p>`; }
-    $("#go").disabled = false; };
+  view().querySelectorAll("a.link").forEach(a => a.onclick = () => go(a.dataset.tab));
+  $("#f").onsubmit = async ev => { ev.preventDefault(); if (!$("#q").value.trim()) return;
+    try { const j = await post("/api/jobs", {kind:"ask", team:S.team, question:$("#q").value}); watchJob(j.id, $("#out")); }
+    catch(e){ $("#out").innerHTML = `<p class="note">${esc(e.message)}</p>`; } };
 }
 
 
@@ -249,7 +331,7 @@ function showStart(){
     <div class="step"><div><h3>Rewind to an earlier meeting</h3><p>Set "as of" to meeting 2 and the same topic shows as out (dropped). The cutoff is applied in the database query, and it is how the brief was written from meetings 1 to 3 only.</p></div><button class="primary" data-go="asof">Show me</button></div>
     <div class="step"><div><h3>Read the brief for Team TS3012</h3><p>What's decided, what changed, who owes what, and what's still disputed, all from meetings 1 to 3. Every point is cited.</p></div><button class="primary" data-go="brief">Show me</button></div>
     <div class="step"><div><h3>Follow a promise to its report-back</h3><p>In IS1008's third meeting the project manager says "Ed" will find out what a display adds to the cost. In the next meeting Ed reports 2 to 3 Euros per remote. The ledger links the two, and resolves "Ed" to Speaker D.</p></div><button class="primary" data-go="actions">Show me</button></div>
-    <div class="step"><div><h3>Search, or ask something new</h3><p>Search finds "twelve and a half" in TS3009 when you type 12.5. Ask runs the agent on a brand-new question (it needs a Claude login).</p></div><button class="primary" data-go="search">Show me</button></div>
+    <div class="step"><div><h3>Search, or ask something new</h3><p>To ask new questions or rerun the agent, connect a model once in <b>Setup</b> (an API key or your Claude login), then use <b>Ask</b> or <b>Run</b>. Search finds "twelve and a half" in TS3009 when you type 12.5. Ask runs the agent on a brand-new question (it needs a Claude login).</p></div><button class="primary" data-go="search">Show me</button></div>
     <div class="step"><div><h3>Check every requirement</h3><p>Each requirement from the assessor's brief, mapped to where it is met.</p></div><button class="primary" data-go="reqs">Show me</button></div>
   </div>`;
   view().querySelectorAll("[data-go]").forEach(b => b.onclick = () => tour(b.dataset.go));
@@ -293,7 +375,7 @@ function showHelp(){
   <h2>How to read the status</h2><p>${pill("in")} decided or reinstated &nbsp; ${pill("out")} dropped &nbsp; ${pill("open")} proposed or left pending (with the last settled side). The ledger is an index, not the truth: the agent always re-reads the turns before answering, and so should you.</p></div>`;
 }
 
-const TABS = {start: showStart, reqs: showReqs, answers: showAnswers, brief: showBrief, team: showTeam, search: showSearch, ask: showAsk, help: showHelp};
+const TABS = {start: showStart, reqs: showReqs, answers: showAnswers, brief: showBrief, team: showTeam, search: showSearch, ask: showAsk, run: showRun, setup: showSetup, help: showHelp};
 async function go(tab){
   S.tab = tab; store("tab", tab);
   document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab));
