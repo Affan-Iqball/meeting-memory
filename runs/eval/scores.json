@@ -1,0 +1,109 @@
+{
+ "grader": "independent reviewer session (Claude Fable 5.2, source fable-qa), which did not answer the questions: graded by hand against eval/gold.json key_points after reading the cited transcript turns, before looking at the answering session's self-grade",
+ "contaminated": {
+  "G06": "gold answer seen during a spot-check before answering",
+  "G13": "gold answer seen during a spot-check before answering",
+  "G14": "gold answer seen during a spot-check before answering"
+ },
+ "per_question": {
+  "G01": {
+   "key_points_hit": 3,
+   "of": 3,
+   "missed": []
+  },
+  "G02": {
+   "key_points_hit": 4,
+   "of": 4,
+   "missed": []
+  },
+  "G03": {
+   "key_points_hit": 3,
+   "of": 4,
+   "missed": [
+    "voice sensor still kept in final design (not asked directly)"
+   ],
+   "note": "missed point is not asked by the question"
+  },
+  "G04": {
+   "key_points_hit": 3,
+   "of": 4,
+   "missed": [
+    "final costing exactly 12.5"
+   ],
+   "note": "missed point is not asked by the question"
+  },
+  "G05": {
+   "key_points_hit": 4,
+   "of": 4,
+   "missed": []
+  },
+  "G06": {
+   "key_points_hit": 4,
+   "of": 4,
+   "missed": []
+  },
+  "G07": {
+   "key_points_hit": 4,
+   "of": 4,
+   "missed": []
+  },
+  "G08": {
+   "key_points_hit": 4,
+   "of": 4,
+   "missed": [],
+   "note": "names B and C as the ones drawn to titanium, which is what the question asks; D's agreement is not stated (lenient; strict reading gives 3/4)"
+  },
+  "G09": {
+   "key_points_hit": 3,
+   "of": 4,
+   "missed": [
+    "final infrared used the company's own chip"
+   ]
+  },
+  "G10": {
+   "key_points_hit": 4,
+   "of": 4,
+   "missed": []
+  },
+  "G11": {
+   "key_points_hit": 3,
+   "of": 4,
+   "missed": [
+    "did not restate that speech recognition had been ruled out earlier and why"
+   ]
+  },
+  "G12": {
+   "key_points_hit": 4,
+   "of": 4,
+   "missed": [],
+   "note": "'no TFT' half of the vote is implied, not stated"
+  },
+  "G13": {
+   "key_points_hit": 5,
+   "of": 5,
+   "missed": []
+  },
+  "G14": {
+   "key_points_hit": 3,
+   "of": 4,
+   "missed": [
+    "features were being added, not cut, at the end of the last meeting"
+   ]
+  }
+ },
+ "summary": {
+  "key_points": "51/56 (91%); 50/56 on a strict reading of G08",
+  "all_key_points": "9/14",
+  "no_contradicted_point": "14/14",
+  "citations_valid": "14/14 (strict checker)",
+  "cites_every_must_cite_meeting": "9/14 (G04, G10, G11, G13, G14 each leave out one gold meeting)",
+  "excluding_contaminated_all_key_points": "7/11"
+ },
+ "previous_self_grade": {
+  "grader": "the session that answered (Claude Opus 5.5)",
+  "key_points": "50/56 (89%)",
+  "all_key_points": "8/14",
+  "difference": "self-grade was one point harsher on G08 (it docked 'D also agreed'); identical on the other 13 questions. Its 'excluding contaminated: 5/11' was a miscount of its own table (6/11)."
+ },
+ "gold_spot_check": "G03, G13 and G14 gold answers checked against the transcripts by the reviewer: no gold key point found wrong. Test-set answers were not edited after grading."
+}

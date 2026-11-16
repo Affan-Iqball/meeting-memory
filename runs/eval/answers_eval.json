@@ -1,0 +1,249 @@
+{
+ "answers": [
+  {
+   "question_id": "G01",
+   "answer": "In meeting b the project manager (A) ruled out speech because it would delay development too much (about eight months to first results). In meeting c Speaker C reported an email from manufacturing saying they already had a voice-recognition chip that could be adapted to commands, so the decision was held over. Voice control was not in the final product.",
+   "citations": [
+    {
+     "meeting_id": "IS1001b",
+     "quote": "And so no speech as well because it w it would delay too much the development process."
+    },
+    {
+     "meeting_id": "IS1001c",
+     "quote": "You we uh an email from the manufacturing division that they have basically a voice recognition chip already developed."
+    },
+    {
+     "meeting_id": "IS1001d",
+     "quote": "D are we including the voice are you glu are we including the voice in the end or not?"
+    }
+   ]
+  },
+  {
+   "question_id": "G02",
+   "answer": "It was the wheel (a wheel sensor), which costs fifty times the price of a push button. They kept the wheel because it was easy to use and innovative, and the final production cost came to 10.70 Euros against the 12.50 Euro limit.",
+   "citations": [
+    {
+     "meeting_id": "IS1001c",
+     "quote": "Uh a wheel sensor is fifty time the price of a a a push button."
+    },
+    {
+     "meeting_id": "IS1001c",
+     "quote": "So, I think we can keep the wheel because it's uh easy, it's innovative, even if the cost is a bit higher, and we also have to find a, so,"
+    },
+    {
+     "meeting_id": "IS1001d",
+     "quote": "And the cost ended to be ten point seven Euros."
+    }
+   ]
+  },
+  {
+   "question_id": "G03",
+   "answer": "At the end of their conceptual design meeting (c) they settled on a custom chip. The final costing in meeting d used a regular standard chip instead, so the last reversal was made in their final meeting (d), by the project manager while filling in the cost sheet.",
+   "citations": [
+    {
+     "meeting_id": "ES2012c",
+     "quote": "We're having a a custom chip, but given the the we've cut the functions down, um that will hopefully not be too problematic, but given that um technol technological innovation"
+    },
+    {
+     "meeting_id": "ES2012d",
+     "quote": "decision I've had to make is that um we're we will have to find a s a regular standard chip to to do this with and I I um I'm"
+    }
+   ]
+  },
+  {
+   "question_id": "G04",
+   "answer": "Speaker C (Kendra, user interface designer) pushed to keep voice recognition for the whole remote and 'just go for it'. Speaker D (Andrew, marketing) backed her with his research that being technologically innovative is the second most important thing to users. Voice recognition survived: the final costing kept the expensive voice sensor as fundamental to the design.",
+   "citations": [
+    {
+     "meeting_id": "ES2012c",
+     "quote": "Anyway, I'm I'm incli kinda inclined to say that we should just go for it."
+    },
+    {
+     "meeting_id": "ES2012c",
+     "quote": "Uh yeah, it's the second most important aspect to users that the device should be technologically innovative."
+    },
+    {
+     "meeting_id": "ES2012d",
+     "quote": "The uh the the voice sensor is is expensive but we we made a a basic decision that that was absolutely fundamental to the to the design so that that"
+    }
+   ]
+  },
+  {
+   "question_id": "G05",
+   "answer": "The idea of lighting the buttons so the remote could be used in the dark (raised in meetings a and b) was dropped in meeting c by the project manager (A). He said that with so few buttons lighting was redundant, and that it would hurt battery life.",
+   "citations": [
+    {
+     "meeting_id": "ES2012b",
+     "quote": "E the unique style, maybe have it light up so it's visible in the dark, um the changeable face-plates, and the lighting up and visible I was when we were"
+    },
+    {
+     "meeting_id": "ES2012c",
+     "quote": "Um the that I mean that's no, because we've got so few buttons that it that actually makes that redundant."
+    },
+    {
+     "meeting_id": "ES2012c",
+     "quote": "of the problems of b of battery life, 'cause that would well that would clobber the battery life, so no, I mean given the nature of the buttons we're having,"
+    }
+   ]
+  },
+  {
+   "question_id": "G06",
+   "answer": "It was Kate (Speaker B, industrial design), who said she would research the cost of a rechargeable battery. At the next meeting she had no costing information because manufacturing had attached no prices, and named the standard battery or kinetic as front-runners. The final costing used one kinetic energy source.",
+   "citations": [
+    {
+     "meeting_id": "ES2013b",
+     "quote": "Well I uh think that's a very interesting idea, but um I'm not a very good industrial designer and I don't know much about what these things cost. I'll do"
+    },
+    {
+     "meeting_id": "ES2013c",
+     "quote": "Oh unfortunately I don't have costing information."
+    },
+    {
+     "meeting_id": "ES2013d",
+     "quote": "Kinetic is um and how many of those will we need per we only need one."
+    }
+   ]
+  },
+  {
+   "question_id": "G07",
+   "answer": "The suggestion (from Speaker C) was a hard plastic inner shell with a thick spongy cover. In the final meeting Kate (B) reported that the case could be spongy rubber or hard plastic but they were not sure about a combination of the two. The final costing used plastic with one rubber case supplement, for a total of 9.20 out of the 12.50 allowed.",
+   "citations": [
+    {
+     "meeting_id": "ES2013c",
+     "quote": "Do you not think it might need like a kind of a hard plastic inner shell with the actual delicate workings inside, and then a kind of spongy"
+    },
+    {
+     "meeting_id": "ES2013d",
+     "quote": "We're not absolutely sure about a combination of the two, but it can be either of those."
+    },
+    {
+     "meeting_id": "ES2013d",
+     "quote": "Um and the total cost has been calculated as nine Pounds twenty out of the twelve and a half we were allowed."
+    }
+   ]
+  },
+  {
+   "question_id": "G08",
+   "answer": "The metal was titanium. Kate (B, industrial design) and Steph (C) were both drawn to it at first, Steph because of shiny, minimalist iPods. It was rejected because it was too expensive and could not be made into a double-curved case (and seemed too futuristic for the organic look); they chose plastic, with rubber.",
+   "citations": [
+    {
+     "meeting_id": "ES2013c",
+     "quote": "I was thinking titanium, I was thinking it's just I have been influenced by pictures of iPods, and they're also minimalist and shiny."
+    },
+    {
+     "meeting_id": "ES2013c",
+     "quote": "One, it's too expensive, um and second, it won't do this double um curves."
+    },
+    {
+     "meeting_id": "ES2013d",
+     "quote": "Um let's put that rubber in then, of the case material supplement."
+    }
+   ]
+  },
+  {
+   "question_id": "G09",
+   "answer": "Speaker C (Hamed, the user interface designer) first preferred radio, because infrared has to be aimed. Speaker B (Petre, technical designer) argued against it: radio circuits cost three to five times more, so for design and price he would stick to infrared, and the marketing expert (D, Bob) agreed it was not worth the extra money since all remotes use infrared. They finally used infrared.",
+   "citations": [
+    {
+     "meeting_id": "IS1005a",
+     "quote": "I uh I prefer um remote control working with radio waves, because remote control working with infra-red rays you should you should you should keep it in a specific direction"
+    },
+    {
+     "meeting_id": "IS1005b",
+     "quote": "personal preference is yes, I would like also preferably to use R_W_ circuit, but from the point of view uh of the design and price, I would stick to I_R_s."
+    },
+    {
+     "meeting_id": "IS1005c",
+     "quote": "So, the last point we decided it's infra-red, I guess."
+    }
+   ]
+  },
+  {
+   "question_id": "G10",
+   "answer": "In meeting c Speaker C (Hemant, industrial designer) proposed two power supplies: ordinary or rechargeable batteries with a base station, plus solar cells. In the final meeting Speaker B (Michael, user interface designer) said the solar cells were no longer necessary, and the final costing used one rechargeable battery and no solar cells.",
+   "citations": [
+    {
+     "meeting_id": "IS1004c",
+     "quote": "batteries if there's a basis station kind of thing and on top of that we can have solar cells, when the lighting conditions are good they can be used so"
+    },
+    {
+     "meeting_id": "IS1004d",
+     "quote": "them on the on the top here since that's like uh the black bit but yeah I don't I really don't think it's necessary to have the solar cells anymore."
+    },
+    {
+     "meeting_id": "IS1004d",
+     "quote": "I think rechargeable batteries will take care of the power thing."
+    }
+   ]
+  },
+  {
+   "question_id": "G11",
+   "answer": "It was the company's new in-house sample sensor / sample speaker unit, which matches a phrase it has been trained on and plays back a phrase in reply. Speaker B (Michael) judged it unsuitable because it has no understanding of the phrase and is not mature enough to work as a speech recognition engine for controlling the TV. For finding the remote, the final design used a simple beep instead of the sample speaker.",
+   "citations": [
+    {
+     "meeting_id": "IS1004c",
+     "quote": "But uh there's no kind of um understanding of the phrase."
+    },
+    {
+     "meeting_id": "IS1004c",
+     "quote": "it's worth it though, I think it doesn't really add much to the functional design and it's it's it's not mature enough to use as a speech recognition engine, so"
+    },
+    {
+     "meeting_id": "IS1004d",
+     "quote": "that sample speaker is not we we're not using that, we're just using the the very beep simple beep, that s that sample thing is like the voice recording and"
+    }
+   ]
+  },
+  {
+   "question_id": "G12",
+   "answer": "It was in their second meeting (ES2005b): the project manager (Speaker C) proposed scratching speech recognition as too expensive. Speaker A, the industrial designer, objected that it was much cheaper than the TFT screen, just a microphone and some integrated circuits, so the team voted for speech recognition. It made it into the final prototype, which has a speaker on top to speak into like a walkie-talkie.",
+   "citations": [
+    {
+     "meeting_id": "ES2005b",
+     "quote": "Um I think we're gonna scratch the speech recognition as a bit of a"
+    },
+    {
+     "meeting_id": "ES2005b",
+     "quote": "Oh no it's it's much cheaper than the T_F_T_, it's just a microphone and some some integrated circuits."
+    },
+    {
+     "meeting_id": "ES2005d",
+     "quote": "Um that's a speaker at the top, so you can speak into it like a little walkie-talkie as well for speak recognition."
+    }
+   ]
+  },
+  {
+   "question_id": "G13",
+   "answer": "The first total was 14.60 Euros against a limit of 12.50 Euros. The project manager first suggested keeping the shape but flattening it, which did not save enough. They then found the case had been entered twice on the cost sheet; correcting it took off three Euros (to about 11.60), bringing them under 12.50.",
+   "citations": [
+    {
+     "meeting_id": "ES2005d",
+     "quote": "Um unfortunately the unit we are currently going to produce minus the extra scroll buttons, uh it's gonna cost us fourteen point six Euros."
+    },
+    {
+     "meeting_id": "ES2005d",
+     "quote": "So basically, um in order to save our two Euros um I was thinking that we could have essentially the same shape, but just have it flattened."
+    },
+    {
+     "meeting_id": "ES2005d",
+     "quote": "It's meant to be one, yeah, I don't know why I put two in there, but um Hold on till I find it, I think this shift button might be"
+    }
+   ]
+  },
+  {
+   "question_id": "G14",
+   "answer": "The premise is false: Team IS1005 held only three meetings and never did a final costing, so there was no total and nothing was cut to reach it. The only cost figure is the target of a production cost of at most 12.50 Euros per unit, set in the kick-off.",
+   "citations": [
+    {
+     "meeting_id": "IS1005a",
+     "quote": "The We expect a production cost of maximum uh twelve point fifty Euro."
+    },
+    {
+     "meeting_id": "IS1005b",
+     "quote": "know, they're features that users want, so it's And our production cost of twelve fifty Euros per per unit is fairly high I think, so I think we can afford"
+    }
+   ]
+  }
+ ],
+ "brief": ""
+}

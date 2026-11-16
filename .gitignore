@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+memory.db-wal
+memory.db-shm
+.claude/
+runs/eval/export.err
+# personal files, not part of the submission
+REPLY_EMAIL_DRAFT.md
+RECORDING_SCRIPT.md
+guide/
+data/BRIEF.pdf

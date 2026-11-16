@@ -1,0 +1,279 @@
+{
+ "sections": [
+  {
+   "heading": "Where we stand going into the final meeting (decided)",
+   "points": [
+    {
+     "text": "We are building a universal remote for young consumers (under forty), not a TV-only one for everybody.",
+     "citations": [
+      {
+       "meeting_id": "TS3012b",
+       "turn_idx": 139,
+       "contains": "we should go for universal"
+      },
+      {
+       "meeting_id": "TS3012b",
+       "turn_idx": 91,
+       "contains": "the younger people were defined under forty"
+      }
+     ]
+    },
+    {
+     "text": "Case: rubber, in the company's yellow, with the leaner shape (square base, rounded top) Mark chose in meeting c. It runs on regular batteries.",
+     "citations": [
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 286,
+       "contains": "we're definitely going for rubber"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 593,
+       "contains": "take yellow"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 75,
+       "contains": "Okay, will just take regular batteries."
+      }
+     ]
+    },
+    {
+     "text": "Interface: the deluxe edition with an LCD screen, no scroll wheel (voted out), and a beep plus flash so a lost remote can be found.",
+     "citations": [
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 265,
+       "contains": "going towards the deluxe edition"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 635,
+       "contains": "No r no scroll-wheel"
+      },
+      {
+       "meeting_id": "TS3012b",
+       "turn_idx": 265,
+       "contains": "it goes beep and that you that some light lights up"
+      }
+     ]
+    },
+    {
+     "text": "Inside: the advanced chip (the LCD screen needs it) and rubber push-buttons, because a rubber case only takes rubber buttons.",
+     "citations": [
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 383,
+       "contains": "The chip is advanced because we have the advanced features"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 130,
+       "contains": "we can only use rubber buttons"
+      }
+     ]
+    },
+    {
+     "text": "Targets from the kick-off still apply: selling price 25 Euros, production cost about 12.50 Euros.",
+     "citations": [
+      {
+       "meeting_id": "TS3012a",
+       "turn_idx": 104,
+       "contains": "Selling price, twenty five Euros"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "heading": "What changed along the way",
+   "points": [
+    {
+     "text": "LCD screen: dropped in meeting b as too big, power-hungry and costly, then brought back in meeting c because users want it (deluxe edition).",
+     "citations": [
+      {
+       "meeting_id": "TS3012b",
+       "turn_idx": 112,
+       "contains": "we should lose the L_C_D_ screen"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 265,
+       "contains": "that seems to be what the people want"
+      }
+     ]
+    },
+    {
+     "text": "Speech recognition: ruled out by Mark in meeting b (too hard across countries and languages), reopened in meeting c once a small speech component turned up and Dirk reported that over sixty percent of target users want it. By the end of meeting c it was drawn into the design (microphone next to the transmitter) but never explicitly confirmed, and it has not been costed.",
+     "citations": [
+      {
+       "meeting_id": "TS3012b",
+       "turn_idx": 145,
+       "contains": "implementing speech recognition is such a small"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 185,
+       "contains": "So we can implement it"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 524,
+       "contains": "where do we want the microphone"
+      }
+     ]
+    },
+    {
+     "text": "Power: the rechargeable unit and charging base discussed in meeting b gave way to a normal battery in meeting c.",
+     "citations": [
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 65,
+       "contains": "this rules out our unit our rechargeable unit"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 75,
+       "contains": "Okay, will just take regular batteries."
+      }
+     ]
+    },
+    {
+     "text": "Changeable covers: welcomed in meeting b, then pushed out of the basic design to 'maybe later'; wood was ruled out at the same time.",
+     "citations": [
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 121,
+       "contains": "let's just rule out wood for now"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 649,
+       "contains": "not something we're working with in the basic design"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "heading": "Open actions and owners",
+   "points": [
+    {
+     "text": "Nick (B, user interface) and Xavier (C, industrial design): work out the final design together, inside and outside, and bring the drawing to the meeting.",
+     "citations": [
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 385,
+       "contains": "you should work together on the final design"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 602,
+       "contains": "doodle us a nice nice design for for the next meeting"
+      }
+     ]
+    },
+    {
+     "text": "Dirk (D, marketing): look up the exact survey figure on voice-recognition interest, do the market analysis, and find out what people are willing to pay above 25 Euros.",
+     "citations": [
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 196,
+       "contains": "I'm I have to look it up"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 566,
+       "contains": "you're gonna do the market market uh analysing"
+      },
+      {
+       "meeting_id": "TS3012b",
+       "turn_idx": 365,
+       "contains": "you can find out i what people are willing to pay"
+      }
+     ]
+    },
+    {
+     "text": "Xavier (C, industrial design): still owes cost figures (none found yet, only that the LCD needs the more expensive advanced chip), and whether the remote can open the TV's own menu.",
+     "citations": [
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 28,
+       "contains": "I still don't have any finance information"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 161,
+       "contains": "we need ano uh an advanced chip in it"
+      },
+      {
+       "meeting_id": "TS3012b",
+       "turn_idx": 214,
+       "contains": "we need to put some research into that if if we can open the menu"
+      }
+     ]
+    },
+    {
+     "text": "Mark (A, project manager): the final project report.",
+     "citations": [
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 566,
+       "contains": "I'm supposed to do the little work on the year-end report"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "heading": "Still disputed: settle these first",
+   "points": [
+    {
+     "text": "Budget risk: nobody has costed the design. Nick warned in meeting b that with an LCD the remote cannot sell for 25 Euros; the LCD forces the more expensive advanced chip and speech recognition adds its own component. Expect to cut something once the cost sheet arrives.",
+     "citations": [
+      {
+       "meeting_id": "TS3012b",
+       "turn_idx": 446,
+       "contains": "we're not going to be able to sell it for twenty-five then"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 635,
+       "contains": "too bad we don't have the finance"
+      }
+     ]
+    },
+    {
+     "text": "Speech recognition: confirm whether it stays once the costs are known, and if it does, whether the remote should also talk back (Xavier raised it, Nick doubted it is needed).",
+     "citations": [
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 547,
+       "contains": "do you actually need the remote talking back"
+      }
+     ]
+    },
+    {
+     "text": "Shape: the working shape is Nick's design with the top rounded off, as Mark asked (it 'looks leaner'). Still open is the cost: Nick said smoothing the edges adds expense, and more curves cost more. Mark's wish for a rounder, fruit-like form was left to the covers, because Nick warned it follows one seasonal trend.",
+     "citations": [
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 299,
+       "contains": "I tend to disagree with with uh with a sharp form"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 366,
+       "contains": "that's just for one seasonal trend"
+      },
+      {
+       "meeting_id": "TS3012c",
+       "turn_idx": 314,
+       "contains": "smooth the edges indeed. But that will bring extra"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meeting Memory</title>
+<style>
+:root{
+  --bg:#f7f6f2; --panel:#ffffff; --ink:#1d1d1b; --muted:#6b6a64; --line:#e4e2da;
+  --accent:#2f5d50; --accent-soft:#e3eee9; --warn:#9a5b00; --warn-soft:#fbf0dc;
+  --in:#2f6f3e; --in-soft:#e2f1e5; --out:#9b2c2c; --out-soft:#f8e3e3; --open:#6b5a00; --open-soft:#f6f0d2;
+  --mark:#fff1a8; --radius:10px; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#151614; --panel:#1e201d; --ink:#ecebe6; --muted:#a3a29b; --line:#33352f;
+  --accent:#8cc3b0; --accent-soft:#233630; --warn:#e7b25c; --warn-soft:#3a2f1c;
+  --in:#8fd19e; --in-soft:#1f3324; --out:#f0a0a0; --out-soft:#3a2222; --open:#e3d27a; --open-soft:#35321c; --mark:#5a4d12;
+}}
+:root[data-theme="dark"]{
+  --bg:#151614; --panel:#1e201d; --ink:#ecebe6; --muted:#a3a29b; --line:#33352f;
+  --accent:#8cc3b0; --accent-soft:#233630; --warn:#e7b25c; --warn-soft:#3a2f1c;
+  --in:#8fd19e; --in-soft:#1f3324; --out:#f0a0a0; --out-soft:#3a2222; --open:#e3d27a; --open-soft:#35321c; --mark:#5a4d12;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:5}
+h1{font-size:17px;margin:0;letter-spacing:.2px}
+h1 small{color:var(--muted);font-weight:400;margin-left:8px}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{border:1px solid transparent;background:none;color:var(--muted);padding:6px 12px;border-radius:999px;cursor:pointer;font:inherit}
+nav button[aria-selected="true"]{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-soft);font-weight:600}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:0;min-height:calc(100vh - 60px)}
+main.noside{grid-template-columns:minmax(0,1fr)}
+#view{padding:20px;max-width:980px;width:100%}
+#side{border-left:1px solid var(--line);background:var(--panel);padding:16px;position:sticky;top:60px;height:calc(100vh - 60px);overflow:auto}
+main.noside #side{display:none}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
+select,input,textarea{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+input[type=search],textarea{flex:1;min-width:200px}
+button.primary{background:var(--accent);color:var(--panel);border:0;border-radius:8px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px}
+.q{font-weight:600}
+.meta{color:var(--muted);font-size:13px}
+.ans{margin:8px 0}
+.cites{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.cite{all:unset;cursor:pointer;display:block;border-left:3px solid var(--accent);padding:4px 10px;background:var(--accent-soft);border-radius:0 6px 6px 0;font-size:14px}
+.cite:hover,.cite:focus-visible{outline:2px solid var(--accent)}
+.cite b{font-family:var(--mono);font-size:12px;margin-right:6px}
+.pill{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;font-weight:600;white-space:nowrap}
+.in{background:var(--in-soft);color:var(--in)} .out{background:var(--out-soft);color:var(--out)} .open{background:var(--open-soft);color:var(--open)} .none{background:var(--line);color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+tr.click{cursor:pointer} tr.click:hover{background:var(--accent-soft)}
+.ev{display:grid;grid-template-columns:86px 1fr;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.ev .k{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.turn{padding:6px 8px;border-radius:6px;font-size:14px}
+.turn .who{font-family:var(--mono);font-size:12px;color:var(--muted);margin-right:6px}
+.turn.focus{background:var(--warn-soft);outline:1px solid var(--warn)}
+mark{background:var(--mark);color:inherit;padding:0 1px}
+.note{background:var(--warn-soft);color:var(--ink);border-radius:8px;padding:10px 12px;font-size:14px;margin-bottom:12px}
+.empty{color:var(--muted);padding:20px 0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+h2{font-size:16px;margin:18px 0 8px} h3{font-size:14px;margin:12px 0 6px;color:var(--muted)}
+.hero{background:linear-gradient(135deg,var(--accent-soft),var(--panel));border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-bottom:18px}
+.hero h2{font-size:22px;margin:0 0 6px}
+.hero p{margin:6px 0;max-width:720px}
+.steps{counter-reset:s;display:grid;gap:12px}
+.step{counter-increment:s;display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.step::before{content:counter(s);width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--panel);display:grid;place-items:center;font-weight:700}
+.step h3{margin:2px 0 4px;color:var(--ink);font-size:15px}
+.step p{margin:0;font-size:14px;color:var(--muted)}
+.step button{white-space:nowrap}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.kv div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.kv b{display:block;font-size:20px}
+.req td:first-child{width:34%}
+.ok{color:var(--in);font-weight:700}
+a.link{color:var(--accent);cursor:pointer;text-decoration:underline}
+@media (max-width:640px){.step{grid-template-columns:34px 1fr}.step button{grid-column:2}}
+.close{float:right;background:none;border:1px solid var(--line);border-radius:6px;color:var(--muted);cursor:pointer;padding:2px 8px}
+@media (max-width:860px){ main{grid-template-columns:minmax(0,1fr)} #side{position:fixed;inset:auto 0 0 0;height:60vh;border-left:0;border-top:1px solid var(--line);z-index:6} #view{padding:16px} }
+</style>
+</head>
+<body>
+<header>
+  <h1>Meeting Memory <small id="sub"></small></h1>
+  <nav role="tablist" id="tabs">
+    <button data-tab="start" aria-selected="true">Start here</button>
+    <button data-tab="reqs">Requirements</button>
+    <button data-tab="answers">Answers</button>
+    <button data-tab="brief">Brief</button>
+    <button data-tab="team">Explore a team</button>
+    <button data-tab="search">Search</button>
+    <button data-tab="ask">Ask</button>
+    <button data-tab="help">How it works</button>
+  </nav>
+</header>
+<main class="noside" id="main">
+  <section id="view"></section>
+  <aside id="side" aria-live="polite"></aside>
+</main>
+<script>
+const $ = (s, el=document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const api = async (path, opts) => { const r = await fetch(path, opts); const j = await r.json(); if (!r.ok) throw new Error(j.error || r.statusText); return j; };
+let S = {teams: [], questions: {}, run: "official", team: null, asOf: "", tab: "answers"};
+const view = () => $("#view");
+const pill = st => { const s = st || "none"; const cls = {in:"in", out:"out", open:"open"}[s] || "none"; const label = {in:"in", out:"out", open:"open", none:"no status"}[s] || s; return `<span class="pill ${cls}">${label}</span>`; };
+const store = (k, v) => { try { v === undefined ? null : localStorage.setItem("mm_"+k, v); return localStorage.getItem("mm_"+k); } catch { return null; } };
+
+function citeBtn(c){
+  return `<button class="cite" data-m="${esc(c.meeting_id)}" data-t="${c.turn_idx ?? ""}" data-q="${esc(c.quote)}"><b>${esc(c.meeting_id)}${c.turn_idx!=null?" t"+c.turn_idx:""}</b>“${esc(c.quote)}”</button>`;
+}
+function wireCites(root){ root.querySelectorAll(".cite").forEach(b => b.onclick = () => openTurns(b.dataset.m, +b.dataset.t, b.dataset.q)); }
+
+async function openTurns(meeting, turn, quote){
+  $("#main").classList.remove("noside");
+  const side = $("#side");
+  side.innerHTML = `<p class="meta">Loading ${esc(meeting)}…</p>`;
+  try {
+    const d = await api(`/api/turns?meeting=${encodeURIComponent(meeting)}&focus=${turn||0}&span=10`);
+    const q = (quote||"").toLowerCase().replace(/\s+/g," ").trim();
+    side.innerHTML = `<button class="close" id="x">Close</button><h2>${esc(meeting)}</h2><p class="meta">Turns ${d.turns[0]?.turn_idx}–${d.turns.at(-1)?.turn_idx} of ${d.n_turns}. The quoted turn is highlighted; this is the raw transcript.</p>` +
+      d.turns.map(t => {
+        let txt = esc(t.text);
+        if (t.turn_idx === d.focus && q){
+          const norm = t.text.replace(/\s+/g," "); const i = norm.toLowerCase().indexOf(q);
+          if (i >= 0) txt = esc(norm.slice(0,i)) + "<mark>" + esc(norm.slice(i, i+q.length)) + "</mark>" + esc(norm.slice(i+q.length));
+        }
+        return `<div class="turn ${t.turn_idx===d.focus?"focus":""}"><span class="who">t${t.turn_idx} ${esc(t.speaker)} ${esc(t.time_str)}</span>${txt}</div>`;
+      }).join("") +
+      `<div class="bar" style="margin-top:10px"><button class="primary" id="earlier">Earlier</button><button class="primary" id="later">Later</button></div>`;
+    $("#x").onclick = () => $("#main").classList.add("noside");
+    $("#earlier").onclick = () => openTurns(meeting, Math.max(0,(d.turns[0]?.turn_idx||0)-10), "");
+    $("#later").onclick = () => openTurns(meeting, (d.turns.at(-1)?.turn_idx||0)+10, "");
+    side.querySelector(".focus")?.scrollIntoView({block:"center"});
+  } catch(e){ side.innerHTML = `<p class="note">${esc(e.message)}</p>`; }
+}
+
+function teamPicker(withAsOf=true){
+  const t = S.teams.find(x => x.team === S.team);
+  const asOf = withAsOf ? `<label class="meta">as of <select id="asof"><option value="">all meetings</option>${(t?.meetings||[]).map(m => `<option value="${m.ord}" ${String(S.asOf)===String(m.ord)?"selected":""}>meeting ${m.ord} (${m.meeting_id})</option>`).join("")}</select></label>` : "";
+  return `<select id="team" aria-label="Team">${S.teams.map(x => `<option ${x.team===S.team?"selected":""}>${x.team}</option>`).join("")}</select>${asOf}`;
+}
+function wirePicker(rerender){
+  $("#team").onchange = e => { S.team = e.target.value; S.asOf = ""; store("team", S.team); rerender(); };
+  const a = $("#asof"); if (a) a.onchange = e => { S.asOf = e.target.value; rerender(); };
+}
+
+// ---------- tabs ----------
+async function showAnswers(){
+  const runs = await api("/api/runs");
+  const run = S.ansRun || S.run;
+  const rows = await api(`/api/answers?run=${encodeURIComponent(run)}`);
+  view().innerHTML = `<div class="bar"><label class="meta">Run <select id="run">${runs.map(r => `<option ${r===run?"selected":""}>${r}</option>`).join("")}</select></label>
+    <input type="search" id="filt" placeholder="Filter by team, id or word"></div>
+    <p class="meta">${rows.length} answers. Click a quote to open it in the transcript. Every quote was copied from the transcript by code, not typed by a model.</p><div id="list"></div>`;
+  const draw = f => {
+    const list = rows.filter(r => !f || (r.question_id+" "+r.team+" "+r.answer+" "+(S.questions[r.question_id]?.question||"")).toLowerCase().includes(f));
+    $("#list").innerHTML = list.map(r => `<article class="card"><div class="meta">${esc(r.question_id)} · ${esc(r.team)}</div>
+      <div class="q">${esc(S.questions[r.question_id]?.question || "")}</div><p class="ans">${esc(r.answer)}</p>
+      <div class="cites">${r.citations.map(citeBtn).join("")}</div></article>`).join("") || `<p class="empty">Nothing matches.</p>`;
+    wireCites($("#list"));
+  };
+  draw(""); $("#filt").oninput = e => draw(e.target.value.toLowerCase());
+  $("#run").onchange = e => { S.ansRun = e.target.value; showAnswers(); };
+}
+
+async function showBrief(){
+  const team = "TS3012";
+  const b = await api(`/api/brief?team=${team}&run=${encodeURIComponent(S.run)}`);
+  if (!b){ view().innerHTML = `<p class="empty">No brief stored for ${team}.</p>`; return; }
+  const t = S.teams.find(x => x.team === team);
+  view().innerHTML = `<p class="note">Brief for Team ${team}, written from meetings 1 to ${b.as_of} only. The agent's tools were cut off at meeting ${b.as_of} in the database query, and the submit step refuses any quote from the final meeting (${t?.meetings.at(-1)?.meeting_id}).</p>` +
+    b.sections.map(s => `<h2>${esc(s.heading)}</h2>` + s.points.map(p => `<div class="card"><p class="ans">${esc(p.text)}</p><div class="cites">${p.citations.map(citeBtn).join("")}</div></div>`).join("")).join("");
+  wireCites(view());
+}
+
+async function showTeam(){
+  const cut = S.asOf ? `&as_of=${S.asOf}` : "";
+  const [topics, acts] = await Promise.all([api(`/api/topics?team=${S.team}${cut}`), api(`/api/actions?team=${S.team}${cut}`)]);
+  topics.sort((a,b) => (b.reversals-a.reversals) || (b.n_events-a.n_events));
+  view().innerHTML = `<div class="bar">${teamPicker()}</div>
+   <p class="meta">Status, reversals and "open" are worked out by code from the event timeline. Click a topic to see its history. Use "as of" to see what the team knew at that point.</p>
+   <h2>Topics</h2><table><thead><tr><th>Topic</th><th>Now</th><th>Reversals</th><th>Events</th><th>Last reversal</th></tr></thead><tbody>
+   ${topics.map(t => `<tr class="click" data-slug="${esc(t.slug)}" tabindex="0"><td>${esc(t.label)}<div class="meta">${esc(t.slug)}</div></td><td>${pill(t.state)}${t.state==="open"&&t.firm?` <span class="meta">last settled: ${t.firm}</span>`:""}</td><td>${t.reversals}${t.reopenings?` <span class="meta">(+${t.reopenings} reopened)</span>`:""}</td><td>${t.n_events}</td><td>${esc(t.last_reversal_meeting||"")}</td></tr>`).join("")}
+   </tbody></table>
+   <h2 id="actions-h">Actions</h2>${acts.map(a => `<div class="card"><span class="pill ${a.status==="open"?"open":"in"}">${a.status}</span> <b>${esc(a.owner_label)}</b> <span class="meta">${esc(a.meeting_id)} · ${esc(a.topic)}</span><p class="ans">${esc(a.summary)}</p>
+     <button class="cite" data-m="${a.meeting_id}" data-t="${a.evidence_turn}" data-q=""><b>${a.meeting_id} t${a.evidence_turn}</b>open in transcript</button>
+     ${a.reported.map(r => `<p class="meta">Reported back in ${esc(r.meeting_id)} by ${esc(r.speaker_label)}: ${esc(r.summary)}</p><button class="cite" data-m="${r.meeting_id}" data-t="${r.evidence_turn}" data-q=""><b>${r.meeting_id} t${r.evidence_turn}</b>open in transcript</button>`).join("")}</div>`).join("") || `<p class="empty">No actions recorded.</p>`}`;
+  wirePicker(showTeam); wireCites(view());
+  view().querySelectorAll("tr.click").forEach(tr => { const go = () => showTimeline(tr.dataset.slug); tr.onclick = go; tr.onkeydown = e => e.key==="Enter" && go(); });
+}
+
+async function showTimeline(slug){
+  const cut = S.asOf ? `&as_of=${S.asOf}` : "";
+  const d = await api(`/api/events?team=${S.team}&topic=${encodeURIComponent(slug)}${cut}`);
+  const st = d.status;
+  $("#main").classList.remove("noside");
+  $("#side").innerHTML = `<button class="close" id="x">Close</button><h2>${esc(slug)}</h2>
+    <p>${pill(st.state)} <span class="meta">${st.state==="open"&&st.firm?"last settled: "+st.firm+" · ":""}${S.asOf?"as of meeting "+esc(S.asOf)+" · ":""}${st.reversals} reversal(s)${st.last_reversal_meeting?", last in "+st.last_reversal_meeting:""}${st.reopenings?" · "+st.reopenings+" reopened":""}</span></p>
+    <p class="meta">Sequence: ${st.sequence.map(s => s.meeting_id.slice(-1)+":"+s.kind).join(" → ") || "none"}</p>` +
+    d.events.map(e => `<div class="ev"><div class="k">${esc(e.meeting_id)}<br>${esc(e.time_str||"")}<br>${esc(e.kind)}</div><div>${e.speaker_label?`<b>${esc(e.speaker_label)}</b>: `:""}${esc(e.summary)}${e.value?` <span class="pill none">${esc(e.value)}</span>`:""}
+      <button class="cite" style="margin-top:4px" data-m="${e.meeting_id}" data-t="${e.evidence_turn}" data-q="${esc(e.evidence_quote)}"><b>t${e.evidence_turn}</b>“${esc(e.evidence_quote)}”</button></div></div>`).join("");
+  $("#x").onclick = () => $("#main").classList.add("noside");
+  wireCites($("#side"));
+}
+
+async function showSearch(){
+  view().innerHTML = `<form class="bar" id="f">${teamPicker()}<input type="search" id="q" placeholder="e.g. LCD cost, 12.5, titanium" value="${esc(S.lastQ||"")}"><button class="primary">Search</button></form>
+    <p class="meta">Keyword search over the transcripts and the extracted events. Numbers and acronyms work either way: "12.5" finds "twelve and a half", "LCD" finds "L_C_D_".</p><div id="res"></div>`;
+  wirePicker(showSearch);
+  $("#f").onsubmit = async ev => { ev.preventDefault(); S.lastQ = $("#q").value; const cut = S.asOf?`&as_of=${S.asOf}`:"";
+    $("#res").innerHTML = `<p class="meta">Searching…</p>`;
+    try {
+      const d = await api(`/api/search?team=${S.team}&q=${encodeURIComponent(S.lastQ)}${cut}`);
+      $("#res").innerHTML = `<div class="grid2"><div><h2>Events</h2>${d.facts.map(e => `<div class="card"><div class="meta">${esc(e.meeting_id)} · ${esc(e.topic_slug||e.topic||"")} · ${esc(e.kind)}</div>${esc(e.summary)} <button class="cite" data-m="${e.meeting_id}" data-t="${e.evidence_turn}" data-q="${esc(e.evidence_quote||"")}"><b>t${e.evidence_turn}</b>open</button></div>`).join("") || `<p class="empty">No events.</p>`}</div>
+        <div><h2>Transcript passages</h2>${d.passages.map(p => `<div class="card"><div class="meta">${esc(p.meeting_id)} · turns ${p.first_turn}–${p.last_turn}</div><pre style="white-space:pre-wrap;font:13px/1.45 var(--mono);margin:6px 0">${esc((p.text_display||"").slice(0,700))}${(p.text_display||"").length>700?"…":""}</pre><button class="cite" data-m="${p.meeting_id}" data-t="${p.first_turn}" data-q=""><b>${p.meeting_id}</b>open in transcript</button></div>`).join("") || `<p class="empty">No passages.</p>`}</div></div>`;
+      wireCites($("#res"));
+    } catch(e){ $("#res").innerHTML = `<p class="note">${esc(e.message)}</p>`; }
+  };
+  if (S.lastQ) $("#f").requestSubmit();
+}
+
+function showAsk(){
+  view().innerHTML = `<p class="note">Ask runs the answering agent live. It needs the Claude command-line tool logged in (or ANTHROPIC_API_KEY set) and takes a minute or two. If it fails, the error is shown here; the other tabs still work.</p>
+    <form class="bar" id="f">${teamPicker(false)}<textarea id="q" rows="2" placeholder="e.g. What did the team finally decide about the case material, and why?"></textarea><button class="primary" id="go">Ask</button></form><div id="out"></div>`;
+  wirePicker(showAsk);
+  $("#f").onsubmit = async ev => { ev.preventDefault(); $("#go").disabled = true; $("#out").innerHTML = `<p class="meta">Working… the agent is searching the ledger and reading transcript turns.</p>`;
+    try {
+      const r = await api("/api/ask", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({team:S.team, question:$("#q").value})});
+      $("#out").innerHTML = r.status === "done" ? `<div class="card"><p class="ans">${esc(r.answer)}</p><div class="cites">${(r.citations||[]).map(citeBtn).join("")}</div></div>` : `<p class="note">${esc(r.error || r.status)}</p>`;
+      wireCites($("#out"));
+    } catch(e){ $("#out").innerHTML = `<p class="note">${esc(e.message)}</p>`; }
+    $("#go").disabled = false; };
+}
+
+
+function showStart(){
+  const nm = S.teams.reduce((n,t)=>n+t.meetings.length,0), ne = S.teams.reduce((n,t)=>n+t.n_events,0);
+  view().innerHTML = `<div class="hero"><h2>Meeting memory, in five minutes</h2>
+    <p>This turns ${nm} recorded design meetings into a memory you can question. It answers with exact quotes, and it knows when a later meeting overturned an earlier decision.</p>
+    <p class="meta">Follow the steps in order. Each button takes you to the right screen. Any quote you click opens the raw transcript, so you can always check the evidence yourself.</p>
+    <div class="kv"><div><b>${S.teams.length}</b>teams</div><div><b>${nm}</b>meetings</div><div><b>${ne.toLocaleString()}</b>events in the ledger</div><div><b>25/25</b>answers pass the quote checker</div></div></div>
+  <div class="steps">
+    <div class="step"><div><h3>See an answer and check its proof</h3><p>Open Q13. It asks whether speech recognition was in TS3004's final design. Click a quote: the transcript opens with the exact words highlighted.</p></div><button class="primary" data-go="q13">Show me</button></div>
+    <div class="step"><div><h3>Watch a decision change over time</h3><p>TS3004 dropped speech recognition in meeting b, put it back in c, and kept it in d. The timeline shows each step. Status and reversals are worked out by code from the events. Note the label: it reads "open, last settled: in", because a late remark about the number of speech buttons was filed as a deferral. That is a known extraction error, and it is why the agent re-reads the turns.</p></div><button class="primary" data-go="timeline">Show me</button></div>
+    <div class="step"><div><h3>Rewind to an earlier meeting</h3><p>Set "as of" to meeting 2 and the same topic shows as out (dropped). The cutoff is applied in the database query, and it is how the brief was written from meetings 1 to 3 only.</p></div><button class="primary" data-go="asof">Show me</button></div>
+    <div class="step"><div><h3>Read the brief for Team TS3012</h3><p>What's decided, what changed, who owes what, and what's still disputed, all from meetings 1 to 3. Every point is cited.</p></div><button class="primary" data-go="brief">Show me</button></div>
+    <div class="step"><div><h3>Follow a promise to its report-back</h3><p>In IS1008's third meeting the project manager says "Ed" will find out what a display adds to the cost. In the next meeting Ed reports 2 to 3 Euros per remote. The ledger links the two, and resolves "Ed" to Speaker D.</p></div><button class="primary" data-go="actions">Show me</button></div>
+    <div class="step"><div><h3>Search, or ask something new</h3><p>Search finds "twelve and a half" in TS3009 when you type 12.5. Ask runs the agent on a brand-new question (it needs a Claude login).</p></div><button class="primary" data-go="search">Show me</button></div>
+    <div class="step"><div><h3>Check every requirement</h3><p>Each requirement from the assessor's brief, mapped to where it is met.</p></div><button class="primary" data-go="reqs">Show me</button></div>
+  </div>`;
+  view().querySelectorAll("[data-go]").forEach(b => b.onclick = () => tour(b.dataset.go));
+}
+async function tour(k){
+  if (k==="q13"){ S.ansRun = "official"; await go("answers"); const f=$("#filt"); f.value="Q13"; f.dispatchEvent(new Event("input")); }
+  else if (k==="timeline"){ S.team="TS3004"; S.asOf=""; await go("team"); showTimeline("speech-recognition"); }
+  else if (k==="asof"){ S.team="TS3004"; S.asOf="2"; await go("team"); showTimeline("speech-recognition"); }
+  else if (k==="brief"){ go("brief"); }
+  else if (k==="actions"){ S.team="IS1008"; S.asOf=""; await go("team");
+    const card = [...view().querySelectorAll(".card")].find(c => c.textContent.includes("how much a display adds"));
+    if (card){ card.style.outline = "2px solid var(--accent)"; card.scrollIntoView({block:"center"}); }
+    else $("#actions-h")?.scrollIntoView(); }
+  else if (k==="search"){ S.team="TS3009"; S.asOf=""; S.lastQ="12.5"; go("search"); }
+  else go(k);
+}
+function showReqs(){
+  const R = [
+   ["Ingest the meetings into a memory store the agent can search","SQLite: turns, passages with an FTS5 index, and the event ledger. All 138 meetings, ingested in about 4 seconds.","team","Explore a team"],
+   ["Answer the 25 questions, 1–3 citations each, exact words","answers.json passes the strict checker 25/25. Quotes are copied by code from turn ids.","answers","Answers"],
+   ["Brief for TS3012 before its final meeting, every point cited","Built as of meeting 3 (meeting d hidden in SQL). Covers decided, changed, open actions with owners, and disputes.","brief","Brief"],
+   ["Real agent behaviour: retrieve, loop, process in steps","The agent loops over the tools (topics, timeline, facts, actions, search, turns). Code rejects bad citations and the agent re-points them.","help","How it works"],
+   ["Architecture that would not fall over at 10,000 meetings","Everything is per meeting and incremental, search is scoped to a team, and nothing is pasted into one prompt. Projected about 2 GB of SQLite and about $44 to extract on Haiku 5.5.","help","How it works"],
+   ["Memory over time: know what is current","Events are ordered by meeting and turn. Code derives the current status, reversals and the last-reversal meeting, and \"as of\" rewinds.","team","Explore a team"],
+   ["People refer back without naming things","A promise is linked to its report-back in a later meeting (\"I'll look into that\" ... \"like your question earlier\"). Names are resolved to letters per meeting.","team","Explore a team"],
+   ["Tool-fit: what the model does vs what code does","A cheap model labels events; code does quotes, ordering, status, cutoffs and checks. See WRITEUP.md and the learning guide.","help","How it works"],
+   ["Proof: 10+ own questions, checked by reading, scored","14 questions in eval/gold.json. Graded by a separate reviewer session: 51/56 key facts, 9 of 14 answers complete, every citation valid (runs/eval/scores.json).","answers","Answers (pick run: eval)"],
+   ["Cost and time to ingest 1,000 meetings","About $4.40 on Haiku 5.5 at list price; about 40 minutes with 20 calls in parallel. Measured token counts are in WRITEUP.md.",null,"WRITEUP.md"],
+   ["Three questions it got wrong, and why","G09, G04 and G14: each missed a detail. There is also a ledger bug (TS3004 shows open) and off-topic quotes that were caught. See WRITEUP.md.",null,"WRITEUP.md"],
+   ["Platform reasoning and where it broke","Python stdlib, SQLite FTS5 (vectors deliberately left out), Haiku and Opus via Claude, tools as an MCP server. Usage limits stopped it twice; all steps are resumable.",null,"WRITEUP.md"],
+   ["Submit: code, README, answers.json, one-page write-up, recording or live demo","Code, README.md, answers.json and the one-page WRITEUP.md (full version in docs/WRITEUP_FULL.md) are in the project folder. The recording itself is not in the folder: RECORDING_SCRIPT.md is the script for it, and this interface is the live demo.",null,"README.md"]];
+  view().innerHTML = `<h2>Every requirement in the brief, and where it is met</h2><p class="meta">Taken from the assessor's PDF (data/BRIEF.pdf). Click to see the evidence.</p>
+   <table class="req"><thead><tr><th>Requirement</th><th>How it is met</th><th>See</th></tr></thead><tbody>${R.map(r=>`<tr><td><span class="ok">✓</span> ${esc(r[0])}</td><td>${esc(r[1])}</td><td>${r[2]?`<a class="link" data-tab="${r[2]}">${esc(r[3])}</a>`:`<span class="meta">${esc(r[3])}</span>`}</td></tr>`).join("")}</tbody></table>
+   <p class="note" style="margin-top:14px">Honest note: answers.json was produced by agent sessions using these exact tools and the code checker. The standalone command-line runner (python3 -m meetmem ask-all) is built and tested against a stand-in, but was not run live because the Claude command-line login was at its weekly usage limit.</p>`;
+  view().querySelectorAll("a.link").forEach(a => a.onclick = () => go(a.dataset.tab));
+}
+
+function showHelp(){
+  view().innerHTML = `<div class="card"><h2>What this is</h2><p>A memory over ${S.teams.length} teams' design meetings (${S.teams.reduce((n,t)=>n+t.meetings.length,0)} meetings). A cheap model read each meeting once and recorded <b>events</b> (decisions, reversals, numbers, promises and report-backs) that point at transcript turns. Code does everything exact: it copies every quote, works out what is current, counts reversals, links promises to report-backs, and enforces the "as of" cutoff.</p>
+  <h2>How to use it</h2><p><b>Answers</b>: the 25 official answers and our own test answers; click any quote to see it in the raw transcript.<br><b>Brief</b>: the pre-meeting brief for TS3012, built from meetings 1–3 only.<br><b>Explore a team</b>: every topic with its current status and reversals; pick "as of" to rewind; click a topic for its timeline.<br><b>Search</b>: keyword search over events and transcripts.<br><b>Ask</b>: run the agent on a new question.</p>
+  <h2>How to read the status</h2><p>${pill("in")} decided or reinstated &nbsp; ${pill("out")} dropped &nbsp; ${pill("open")} proposed or left pending (with the last settled side). The ledger is an index, not the truth: the agent always re-reads the turns before answering, and so should you.</p></div>`;
+}
+
+const TABS = {start: showStart, reqs: showReqs, answers: showAnswers, brief: showBrief, team: showTeam, search: showSearch, ask: showAsk, help: showHelp};
+async function go(tab){
+  S.tab = tab; store("tab", tab);
+  document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab));
+  $("#main").classList.add("noside");
+  view().innerHTML = `<p class="meta">Loading…</p>`;
+  try { await TABS[tab](); } catch(e){ view().innerHTML = `<p class="note">${esc(e.message)}</p>`; }
+}
+(async () => {
+  const d = await api("/api/teams");
+  S.teams = d.teams; S.questions = d.questions; S.run = d.run;
+  S.team = store("team") && d.teams.some(t => t.team === store("team")) ? store("team") : "TS3012";
+  $("#sub").textContent = `${d.teams.length} teams · ${d.teams.reduce((n,t)=>n+t.meetings.length,0)} meetings · ${d.teams.reduce((n,t)=>n+t.n_events,0).toLocaleString()} events`;
+  document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => go(b.dataset.tab));
+  go(TABS[store("tab")] ? store("tab") : "start");
+})();
+</script>
+</body>
+</html>
