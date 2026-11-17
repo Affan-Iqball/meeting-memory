@@ -23,10 +23,10 @@ Code does parsing, indexing, normalising, quote building and checking, ordering,
 
 Most rules are enforced by code or by the tools rather than asked for in a prompt:
 
-- **The brief can't peek.** The "as of" cutoff is a hard clamp in the tool server. Even if the model asks for meeting d, it gets nothing.
+- **The brief can't peek.** Every read tool takes an "as of" cutoff applied in SQL, and code refuses any citation from after it. The tool server can also clamp every call to one team and its first N meetings, whatever the model asks (the `brief` command sets this). The submitted brief was written by an agent session using the same tools with `--as-of 3`.
 - **Tools refuse bad work and explain why.** `submit_answer` rejects more than three sentences, a citation that isn't in the turn, or the wrong team, and says what to fix. Extraction works the same way.
-- **The model is sandboxed.** It has no shell, files or web, only the meetmem tools, so a transcript can't talk it into doing anything else.
-- **One tool server, three front ends.** The same MCP tools serve the CLI agent, Claude Code or Desktop, and the web interface.
+- **The standalone runner is sandboxed.** `claude -p` gets no shell, files or web, only the meetmem tools, so a transcript can't talk it into doing anything else. (The submitted answers came from Claude Code agent sessions using the same tools and checker; see "What broke".)
+- **One set of tools everywhere.** The same read tools serve the CLI agent and Claude Code or Desktop through MCP, and the web interface calls them directly.
 - **Nothing is lost when limits hit.** Every step resumes where it stopped. A usage limit exits cleanly (code 3) instead of crashing halfway.
 - **The web interface is safe to leave running.** It listens only on 127.0.0.1, and POSTs need a custom header, so another website can't start paid jobs or change settings.
 - **Tests cost nothing.** A fake `claude` script stands in for the model, so all 56 tests run in about 10 seconds with no calls.
