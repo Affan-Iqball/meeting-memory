@@ -83,7 +83,7 @@ Measured on this run:
 On Opus 5.5 ($4 / $20), the model that actually answered here, the same question is about $0.24.
 
 - **Wall time, API path:** each part is one call of 15 to 30 seconds. 1,000 meetings is about 1,750 calls, so roughly 40 minutes at 20 calls in parallel, or about 10 hours one at a time. Ingest adds 30 seconds.
-- **What actually ran:** this run used Claude subscription session workers instead of the API, at about 250,000 tokens per four-meeting team, with 10 to 14 workers in parallel. 30 teams finished in roughly 25 minutes of wall time.
+- **What actually ran:** this run used Claude subscription session workers instead of the API, because at this volume a flat subscription is far cheaper than paying per token. That came to about 250,000 tokens per four-meeting team, with 10 to 14 workers in parallel. 30 teams finished in roughly 25 minutes of wall time.
 - **Prices:** dollar figures are API list prices applied to measured token counts, not a bill.
 
 ## Platform: what I chose and where it broke

@@ -49,6 +49,7 @@ Measured: 1.75 parts per meeting, about 8,300 input and 2,500 output tokens per 
 
 - **Stack:** Python standard library and SQLite FTS5. Vectors were left out deliberately, because questions name a team.
 - **Models:** Claude Haiku 5.5 extracts and Claude Opus 5.5 answers. The tools are an MCP server, also used by a local web interface.
+- **Subscription, not an API key:** I ran the build on my Claude subscription. With hundreds of agent calls, a flat monthly plan costs far less than paying per token on an API key. The code takes an API key the same way, and a production service would use the API's batch endpoint.
 - **What broke:**
   - Subscription usage limits stopped the workers twice; every step is resumable.
   - The standalone `claude -p` runner was blocked by a weekly limit, so it is tested only against a fake CLI. `answers.json` came from Claude agent sessions using the same tools and checker.
